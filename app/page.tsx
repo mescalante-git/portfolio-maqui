@@ -1,39 +1,29 @@
-"use client";
-
-import { useEffect, useState, useRef } from "react";
-import Header from "@/components/header";
-import Hero from "@/components/hero";
-import Portfolio from "@/components/portfolio";
-import WorkMethodItemCard from "@/components/WorkMethodItemCard";
-import Experiencia from "@/components/experiencia";
-import Metodologia from "@/components/metodologia";
-import IdCard from "@/components/id-card";
-import Contact from "@/components/contact";
-import Footer from "@/components/footer";
+import Nav from "@/components/home/Nav";
+import Hero from "@/components/home/Hero";
+import About from "@/components/home/About";
+import Projects from "@/components/home/Projects";
+import Skills from "@/components/home/Skills";
+import Experience from "@/components/home/Experience";
+import Contact from "@/components/home/Contact";
+import Footer from "@/components/home/Footer";
+import HomeEffects from "@/components/home/HomeEffects";
+import "@/components/home/home.css";
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <div className="relative overflow-hidden bg-background">
-      <Header />
-      <Hero scrollY={scrollY} />
-      <IdCard />
-      <WorkMethodItemCard />
-      <Portfolio />
-      <Experiencia />
-      {/* <Metodologia /> */}
-      <Contact />
+    <>
+      <div className="scan" aria-hidden="true" />
+      <Nav />
+      <main>
+        <Hero />
+        <About />
+        <Projects />
+        <Skills />
+        <Experience />
+        <Contact />
+      </main>
       <Footer />
-    </div>
+      <HomeEffects />
+    </>
   );
 }
