@@ -26,7 +26,7 @@ const montserrat = Montserrat({
   preload: false,
 });
 
-const SITE_URL = "https://macarenaescalante.vercel.app";
+const SITE_URL = "https://macarena-escalante.vercel.app";
 const TITLE = "Macarena Escalante · UX/UI & Product Designer";
 const DESCRIPTION =
   "Hago que lo complejo se vuelva simple de usar. Diseñadora UX/UI y de producto en Buenos Aires: research, design systems y diseño con IA.";
