@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { CASOS, caseVars, casoHref } from "@/lib/casos";
 import { glitch, isNarrow, prefersReducedMotion } from "@/lib/fx";
@@ -147,9 +146,9 @@ export default function Projects() {
                       </span>
                     ))}
                   </div>
-                  <Link className="btn" href={casoHref(c)}>
+                  <a className="btn" href={casoHref(c)}>
                     VER CASO →
-                  </Link>
+                  </a>
                 </div>
                 <div className="pv" aria-hidden="true" style={caseVars(c)}>
                   <span className="pv-l">{c.lbl}</span>

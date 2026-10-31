@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { Montserrat, Space_Grotesk, Space_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -15,6 +15,15 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "700"],
   variable: "--font-space-grotesk",
   display: "swap",
+});
+
+/* Tipografía del producto de QR Solutions: sólo se usa en las recreaciones del caso QR IA */
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap",
+  preload: false,
 });
 
 const SITE_URL = "https://macarenaescalante.vercel.app";
@@ -47,7 +56,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${spaceMono.variable} ${spaceGrotesk.variable}`}>
+    <html lang="es" className={`${spaceMono.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
       <body>
         {children}
         <Analytics />

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { casoById, casoHref, type CaseId } from "@/lib/casos";
 import { prefersReducedMotion } from "@/lib/fx";
@@ -148,14 +147,14 @@ function JobItem({ x, i }: { x: Job; i: number }) {
         <p>{x.p}</p>
         <div className="xp-row">
           {x.cases.map(([n, cid]) => (
-            <Link
+            <a
               key={cid}
               className="xp-case"
               style={{ "--k2": casoById(cid).kl } as CSSProperties}
               href={casoHref(casoById(cid))}
             >
               CASO · {n}
-            </Link>
+            </a>
           ))}
           <button className="xp-more" type="button" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
             {open ? "VER MENOS −" : "VER MÁS +"}
