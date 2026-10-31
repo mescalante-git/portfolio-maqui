@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { prefersReducedMotion, sleep } from "@/lib/fx";
+import { onReenter } from "@/lib/replay";
 
 type Cmd = {
   c: string;
@@ -113,6 +114,7 @@ export default function Skills() {
   const outRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
   const tok = useRef(0);
+  const cur = useRef(0);
 
   /* Escribe el comando letra por letra y después muestra la respuesta */
   async function run(i: number, anim: boolean) {
@@ -120,6 +122,7 @@ export default function Skills() {
     const x = CMDS[i];
     const out = outRef.current!;
     setActive(i);
+    cur.current = i;
     if (prefersReducedMotion() || !anim) {
       out.innerHTML = staticOut(x);
       return;
@@ -142,7 +145,10 @@ export default function Skills() {
     const term = termRef.current!;
     const onRevealed = () => run(0, true);
     term.addEventListener("revealed", onRevealed);
+    /* al volver a la sección, la terminal vuelve a escribir el comando elegido */
+    const r = onReenter([term], () => {}, () => run(cur.current, true));
     return () => {
+      r();
       term.removeEventListener("revealed", onRevealed);
       tok.current++;
     };

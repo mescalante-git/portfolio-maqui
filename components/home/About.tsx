@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { prefersReducedMotion } from "@/lib/fx";
+import { onReenter } from "@/lib/replay";
 
 const TIMELINE: [string, string, string, string][] = [
   ["2019", "Testing QA", "#6E6385", "0ms"],
@@ -71,7 +72,10 @@ export default function About() {
     };
     ph.addEventListener("revealed", onRevealed);
     ph.addEventListener("mouseenter", onEnter);
+    /* al volver a la sección, el barrido de la foto corre de nuevo */
+    const r = onReenter([ph], (el) => el.classList.remove("run"), () => onEnter());
     return () => {
+      r();
       t?.disconnect();
       clearTimeout(to);
       ph.removeEventListener("revealed", onRevealed);

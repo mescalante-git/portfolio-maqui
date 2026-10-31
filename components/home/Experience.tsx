@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { casoById, casoHref, type CaseId } from "@/lib/casos";
 import { prefersReducedMotion } from "@/lib/fx";
+import { onReenter } from "@/lib/replay";
 import { CV_URL } from "@/lib/contacto";
 
 type Job = {
@@ -193,7 +194,16 @@ export default function Experience() {
       { threshold: 0.5 },
     );
     items.forEach((i) => o.observe(i));
-    return () => o.disconnect();
+    /* al volver a la sección, las líneas se dibujan de nuevo */
+    const r = onReenter(
+      items,
+      (el) => el.classList.remove("seen"),
+      (el) => el.classList.add("seen"),
+    );
+    return () => {
+      o.disconnect();
+      r();
+    };
   }, []);
 
   return (
