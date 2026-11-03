@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { onReenter } from "@/lib/replay";
 /* Animaciones e interacciones del caso, tal cual el HTML aprobado. */
 export default function run() {
 (() => {
@@ -104,10 +105,11 @@ export default function run() {
     investigacion: ['INVESTIGACIÓN', 'Los puntos del benchmark se encienden en cascada y cada uno tiene su observación. Los 72 hallazgos se filtran por nivel y área, y los críticos pulsan en rosa.'],
     data: ['DATA & HALLAZGOS', 'Las barras de GA4 se dibujan con datos reales y los números cuentan desde 0. Los hallazgos de Clarity entran en cascada y las capturas originales se despliegan. Las cards ICE se inclinan con el mouse.'],
     usabilidad: ['USABILIDAD', 'Un trazo neón recorre la línea de tiempo y enciende cada paso. Los chips de perfil cambian el contenido del panel.'],
+    usuarios: ['USUARIOS', ''],
     solucion: ['SOLUCIÓN', 'Elegí un flujo con los chips: la versión actual y la nueva entran con un deslizamiento. Clic en una captura para ampliarla (Esc para cerrar).'],
     conclusion: ['CONCLUSIÓN', 'Las cards entran en cascada y el botón del siguiente caso tiene un desplazamiento al pasar el mouse.']
   };
-  const SECS = ['portada', 'intro', 'investigacion', 'data', 'usabilidad', 'solucion', 'conclusion'].map(id => $('#' + id));
+  const SECS = ['portada', 'intro', 'investigacion', 'data', 'usabilidad', 'usuarios', 'solucion', 'conclusion'].map(id => $('#' + id));
   const nav = $('#nav'), prog = $('#progress'), grid = $('#gridBg'), navCur = $('#navCur');
   const links = $$('.nav li a');
   let cur = '', ticking = false;
@@ -229,24 +231,6 @@ export default function run() {
     c.addEventListener('pointerleave', () => { c.style.transform = ''; });
   });
 
-  /* ---- perfiles ---- */
-  const PROF = {
-    COBRE: ['Explorar el catálogo, ver la ficha del producto, agregarlo al carrito y pagar', 'Catálogo de productos', 'Producción (PROD)'],
-    PLATA: ['Crear una cuenta (usuario natural o jurídico) y comprar viendo la invitación a mejorar el plan', 'Creación de usuario', 'Staging (STG)'],
-    ORO: ['Gestionar Mi cuenta: pedidos, cotizaciones, cuenta corriente y pago de facturas', 'Mi cuenta', 'Staging (STG)'],
-    DIAMANTE: ['Comprar con el plan más alto: negociar el precio, pagar y validar con código de verificación', 'Single de producto', 'Staging (STG)']
-  };
-  const panel = $('#panel');
-  function showProf(k) {
-    const d = PROF[k];
-    panel.innerHTML = ['TAREA', 'PUNTO DE INICIO', 'AMBIENTE'].map((l, i) => '<div><dt>' + l + '</dt><dd>' + d[i] + '</dd></div>').join('');
-  }
-  $$('.chip', $('#profiles')).forEach(b => b.addEventListener('click', () => {
-    $$('.chip', $('#profiles')).forEach(o => o.setAttribute('aria-pressed', o === b));
-    showProf(b.textContent.trim());
-  }));
-  showProf('COBRE');
-
   /* ---- visor de flujos: actual vs. nueva ---- */
   const FLOWS = [{"k": "catalogo", "t": "COBRE · CATÁLOGO", "c": "cy", "ev": "USABILIDAD + CLARITY", "l": ["Eliminé el “ojo de preview”: generaba confusión en las pruebas de usabilidad.", "Si el producto no está disponible, el aviso aparece en el catálogo con un CTA, y no recién al intentar agregarlo al carrito.", "Sumé imágenes reales de los productos, sugeridas por los clientes en las pruebas.", "Mejor jerarquía y diferenciación por color para facilitar la navegación."]}, {"k": "single", "t": "COBRE · SINGLE DEL PRODUCTO", "c": "cy", "ev": "CLARITY + USABILIDAD", "l": ["La información pasó a 2 columnas: Clarity mostró que algunos usuarios no llegaban al final de la página.", "Compartir el producto es más visible y hay un CTA que invita a subir de plan para un mejor precio.", "“Información” pasó a llamarse “Ficha técnica” para facilitar el acceso (surgió en las pruebas de usabilidad).", "Carrusel de otros productos con mejor estructura de card y jerarquía visual."]}, {"k": "registro", "t": "PLATA · CREACIÓN DE USUARIO NATURAL", "c": "pk", "ev": "", "l": ["Los requisitos de la contraseña se muestran desde el inicio; antes se indicaban sobre la marcha y generaban retrabajo.", "Botón para visualizar la contraseña.", "Mejor jerarquía visual: las opciones clicables van al lado del mapa para aprovechar el espacio."]}, {"k": "cta", "t": "PLATA · SINGLE DE PRODUCTO (CTA)", "c": "pk", "ev": "", "l": ["Se invita al usuario a mejorar su plan (pasarse a Oro) para obtener un mejor precio."]}, {"k": "vendedores", "t": "ORO · MI CUENTA · VENDEDORES", "c": "vi", "ev": "", "l": ["Búsqueda por nombre para agilizar, pensando en que a futuro puede haber más vendedores y la pantalla debe escalar.", "Diseño mejorado y ícono de WhatsApp actualizado para mantener coherencia visual."]}, {"k": "facturas", "t": "ORO · MI CUENTA · PAGO DE FACTURAS", "c": "vi", "ev": "", "l": ["Diseño limpio, con los menús desplegables en la disposición esperada.", "Se evitan los scrolls innecesarios."]}, {"k": "programas", "t": "ORO · MI CUENTA · PROGRAMAS", "c": "li", "ev": "", "l": ["Mejor jerarquía de la información dentro de las cards.", "Bordes verdes al hacer hover sobre la card.", "Se eliminaron las fechas para no tener que actualizar el sitio constantemente.", "CTA claro para descargar el PDF."]}];
   const IMGS = {"catalogo": ["/casos/ns-agro/img-04.webp", "/casos/ns-agro/img-05.webp"], "single": ["/casos/ns-agro/img-06.webp", "/casos/ns-agro/img-07.webp"], "registro": ["/casos/ns-agro/img-08.webp", "/casos/ns-agro/img-09.webp"], "cta": ["/casos/ns-agro/img-10.webp", "/casos/ns-agro/img-11.webp"], "vendedores": ["/casos/ns-agro/img-12.webp", "/casos/ns-agro/img-13.webp"], "facturas": ["/casos/ns-agro/img-14.webp", "/casos/ns-agro/img-15.webp"], "programas": ["/casos/ns-agro/img-16.webp", "/casos/ns-agro/img-17.webp"]};
@@ -271,4 +255,187 @@ export default function run() {
   lb.addEventListener('click', () => lb.classList.remove('on'));
   addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
 })();
+
+  /* ================= 05 · USUARIOS ================= */
+(()=>{
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const P = {co:'COBRE',pl:'PLATA',or:'ORO',di:'DIAMANTE'};
+const COL={co:'var(--pink)',pl:'var(--cyan)',or:'var(--lime)',di:'var(--violet)'};
+
+/* 12 participantes: nombre ficticio, el resto tal cual la tabla de sesiones */
+const S = [
+ ['co','Cristián Morales',43,'Región del Bío-Bío','Pequeña','Tomates','Asesor','Docente','Alta','Nada','Crédito'],
+ ['co','Marcelo Tapia',38,'Maule','Mediana','Cerezos y kiwis','Jefe técnico','Administrador','Baja','Baja','Crédito'],
+ ['co','Tomás Henríquez',27,"O'Higgins",'Productor grande','Cerezos','No muy determinante','Ing. agrónomo, supervisor de labores y aplicaciones','Intermedia','Media','Transferencia'],
+ ['pl','Diego Carrasco',34,'San Felipe','120 ha','Uva de mesa','Departamento técnico','Administración','Intermedia-avanzada','Nula','Crédito a 1 año'],
+ ['pl','Francisca Vergara',32,'—','—','Palta','Área de calidad y poscosecha','Administración','Media','Baja','Transferencia'],
+ ['pl','Luis Contreras',35,'Molina, Maule','0,7 ha','Cerezo','Agricultor / propietario','Agricultor','Básica','Trimestral','Efectivo'],
+ ['or','Patricio Araya',46,'Hijuelas','1,5 ha','Paltos','Agrónomo dueño','Ing. eléctrico','60%','Iniciando: 2 compras al mes','Crédito'],
+ ['or','Sebastián Reyes',34,'Codegua / Requínoa','300 ha','Ciruelos','Jefe técnico y de producción','—','Media-alta','Seguida, con vendedor asignado','A 120 días'],
+ ['or','Gonzalo Sepúlveda',37,'Coinco','Mediana','Hortalizas, lechugas','Propietario','Ing. agrícola','Media-alta','Muy baja','Transferencia'],
+ ['di','Paula Espinoza',36,'Palmilla-Pichidegua','230 ha','Cítricos','Encargada de cotizaciones','Secretaria administrativa','Sin dato (no cotizaron por la web)','Nada','Crédito'],
+ ['di','Javiera Muñoz',33,"Talagante, O'Higgins y Sagrada Familia",'Gran empresa','Cereza','Analista de adquisiciones','Ing. comercial','Alta','Nada: negocia con su zonal','Transferencia por nómina'],
+ ['di','Ignacio Vidal',33,'Araucanía','270 ha','Cereales / hortalizas','Administrador','Administración','Avanzada','Baja','Cheque'],
+];
+const tb=document.getElementById('tbody');
+function renderTable(k,anim){
+  tb.innerHTML=S.filter(r=>r[0]===k).map((r,i)=>`<tr class="k-${r[0]}${anim&&!RM?' swap':''}" style="animation-delay:${i*70}ms"><th scope="row">${r[1]}</th><td class="n">${r[2]}</td><td>${r[5]} · ${r[4]}</td><td>${r[6]}</td><td class="dig">${r[8]}</td><td>${r[9]}</td></tr>`).join('');
+}
+
+/* ---------- personas ---------- */
+const PER = {
+ co:{ini:'R',name:'Rodrigo Fuentes',age:36,src:'Cristián, Marcelo y Tomás',
+   role:'Asesor, jefe técnico o agrónomo. Tomates, cerezos y kiwis, de campos chicos a grandes.',
+   ask:['Que la sección se llame “Sucursales” y no “Red de atención”.','Ver antes de comprar cuál es el mínimo para envío a domicilio.'],
+   goals:['Ver el catálogo de fitosanitarios.','Comprar productos sin ayuda.','Encontrar su sucursal.'],
+   pains:['El ícono del ojo (vista previa) confunde y no entra al detalle del producto.','La fecha no disponible aparece recién avanzado el flujo de compra.','El botón de comprar se habilita sólo al recargar la página.','La dirección admite sólo 30 caracteres.'],
+   dig:'De baja a alta', compra:'Nada, baja o media', pago:'Crédito y transferencia', tasks:'Catálogo, compra de 2 productos, sucursales, noticias'},
+ pl:{ini:'C',name:'Camila Rojas',age:34,src:'Diego, Francisca y Luis',
+   role:'Departamento técnico, calidad o dueño. Uva de mesa, palta y cerezo, de 0,7 a 120 ha.',
+   ask:['La ficha técnica como acceso rápido, sin tener que desplegar información.'],
+   goals:['Crear su usuario.','Descargar fichas técnicas.','Consultar los programas fitosanitarios.'],
+   pains:['No ve las condiciones de la contraseña hasta equivocarse, y el color de seguridad no se entiende.','No sabe qué son los caracteres especiales.','Le cuesta encontrar la ficha técnica.','Intenta registrarse desde el login o el footer.'],
+   dig:'De básica a intermedia-avanzada', compra:'Nula, baja o trimestral', pago:'Crédito, transferencia y efectivo', tasks:'Crear usuario, fichas técnicas, catálogo, programas'},
+ or:{ini:'A',name:'Andrés Soto',age:39,src:'Patricio, Sebastián y Gonzalo',
+   role:'Agrónomo dueño, jefe técnico o propietario. Paltos, ciruelos y hortalizas, de 1,5 a 300 ha.',
+   ask:['Fotos reales del producto y de su etiqueta: lo reconocen por el color de la tapa.','Que los banners de la home lleven a algún lado, por ejemplo al outlet.','Detalle de peligrosidad en los herbicidas.'],
+   goals:['Pedir un análisis foliar.','Descargar sus facturas.','Encontrar tips y recomendaciones.'],
+   pains:['Usa el buscador para todo, pero sólo encuentra productos.','No encuentra dónde pedir el análisis foliar.','“Histórico de compras/pedidos” no le dice que ahí están las facturas.','No ve que la tabla tiene scroll horizontal.'],
+   dig:'60% y media-alta', compra:'De muy baja a seguida, con vendedor', pago:'Crédito, a 120 días y transferencia', tasks:'Análisis foliar, facturas, catálogo, tips'},
+ di:{ini:'V',name:'Valentina Pérez',age:34,src:'Paula, Javiera e Ignacio',
+   role:'Cotizaciones, adquisiciones o administración de empresas grandes. Cítricos, cereza y cereales, más de 230 ha.',
+   ask:['Tener facturas, notas de crédito y notas de débito juntas en el histórico.','Facturas agrupadas por pedido o con filtros, no una por producto.'],
+   goals:['Pedir más permisos para su usuario.','Cotizar un producto con su vendedor.','Seguir sus pedidos.'],
+   pains:['No sabe desde dónde pedir la extensión de permisos.','Al cotizar no le avisa que falta la dirección.','No queda claro si la fecha es para cotizar o para recibir.','Hay que recargar para que se habilite el botón de cotizar.'],
+   dig:'Alta y avanzada (una sin dato)', compra:'Nada o baja: negocian con su vendedor', pago:'Crédito, transferencia y cheque', tasks:'Permisos, cotizar, seguimiento, webinar'},
+};
+const pEl=document.getElementById('persona');
+function renderPersona(k,anim){
+  const d=PER[k], a=anim?' swap':'';
+  pEl.className='persona k-'+k;
+  pEl.innerHTML=`
+   <div class="p-id${a}">
+     <div class="mono-av" aria-hidden="true">${d.ini}</div>
+     <span class="p-tag">PERFIL ${P[k]}</span>
+     <h4 class="p-name">${d.name}</h4>
+     <p class="p-role">${d.age} años · ${d.role}</p>
+     <div class="p-ask"><h5>LO QUE PIDIÓ EN LAS SESIONES</h5><ul>${d.ask.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+     <p class="p-src">Persona armada con las sesiones de ${d.src}.</p>
+   </div>
+   <div class="p-body">
+     <div class="p-box${a}" style="animation-delay:80ms"><h4>OBJETIVOS</h4><ul>${d.goals.map(g=>`<li>${g}</li>`).join('')}</ul></div>
+     <div class="p-box fr${a}" style="animation-delay:160ms"><h4>FRUSTRACIONES</h4><ul>${d.pains.map(g=>`<li>${g}</li>`).join('')}</ul></div>
+     <div class="p-box p-rel${a}" style="animation-delay:240ms"><h4>CÓMO SE RELACIONA CON EL SITIO</h4>
+       <dl class="rel">
+         <div><dt>FAMILIARIDAD DIGITAL</dt><dd>${d.dig}</dd></div>
+         <div><dt>COMPRA EN EL SITIO</dt><dd>${d.compra}</dd></div>
+         <div><dt>FORMA DE PAGO</dt><dd>${d.pago}</dd></div>
+         <div><dt>TAREAS QUE PROBÓ</dt><dd>${d.tasks}</dd></div>
+       </dl>
+     </div>
+   </div>`;
+}
+
+const IMG={"6": {"actual": "/casos/ns-agro/usuarios/antes-06.webp", "nueva": "/casos/ns-agro/usuarios/despues-06.webp"}, "7": {"actual": "/casos/ns-agro/usuarios/antes-07.webp", "nueva": "/casos/ns-agro/usuarios/despues-07.webp"}, "23": {"actual": "/casos/ns-agro/usuarios/antes-23.webp", "nueva": "/casos/ns-agro/usuarios/despues-23.webp"}, "34": {"actual": "/casos/ns-agro/usuarios/antes-34.webp", "nueva": "/casos/ns-agro/usuarios/despues-34.webp"}};
+/* ---------- de la sesión al rediseño: sólo cambios que salieron de las sesiones o de Clarity ---------- */
+const FIX=[
+ {pg:6,screen:'Catálogo',who:['co','or'],src:'Sesiones y Clarity',
+  ses:'El ícono del ojo (vista previa) confundía: no entraban al detalle del producto. También pidieron fotos reales, porque reconocen cada producto por el color de la tapa.',
+  cla:'El ojo tenía 100% de clics fallidos.',
+  fix:'Saqué el ojo de vista previa y sumé fotos reales de los productos. El aviso de producto no disponible pasó al catálogo.'},
+ {pg:7,screen:'Ficha del producto',who:['pl'],src:'Sesiones y Clarity',
+  ses:'Les costaba encontrar la ficha técnica y la querían como acceso rápido.',
+  cla:'Muchos no llegaban a la parte de abajo de la página.',
+  fix:'“Información” pasó a llamarse “Ficha técnica” y ordené la información en 2 columnas para evitar scroll.'},
+ {pg:23,screen:'Creación de usuario',who:['pl'],src:'Sesiones',
+  ses:'No veían las condiciones de la contraseña hasta equivocarse: tenían que borrar y volver a escribir. El color de seguridad no se entendía.',
+  fix:'Las condiciones se ven desde el principio y se pintan a medida que se cumplen. Sumé un botón para ver la contraseña.'},
+ {pg:34,screen:'Histórico de pedidos',who:['or','di'],src:'Sesiones',
+  ses:'Cada producto repetía la factura en vez de agruparse por pedido, y no veían que la tabla tenía scroll horizontal.',
+  fix:'Agrupé los pedidos por orden de compra, la descarga baja la orden completa y la tabla ya no tiene scroll horizontal.'},
+];
+const fixEl=document.getElementById('fixes');
+fixEl.innerHTML=FIX.map((f,i)=>`<article class="fix" data-rv>
+  <header class="fix-h"><span class="fix-n">${i+1}</span><h4>${f.screen}</h4>
+    <span class="fix-who">LO PIDIÓ: ${f.who.map(k=>`<span class="u-tag k-${k}">${P[k]}</span>`).join('')}</span>
+    <span class="src"><i aria-hidden="true"></i>SURGIÓ DE ${f.src.toUpperCase()}</span></header>
+  <div class="fix-txt">
+    <div><h5>EN LAS SESIONES</h5><p>${f.ses}</p>${f.cla?`<h5 class="cl">EN CLARITY</h5><p>${f.cla}</p>`:''}</div>
+    <div><h5 class="ch">QUÉ CAMBIÉ</h5><p>${f.fix}</p></div>
+  </div>
+  <div class="u-ba">${[['ANTES','actual'],['DESPUÉS','nueva']].map(([l,t])=>`<figure><figcaption>${l}</figcaption><button type="button" class="zoom" aria-label="Ampliar ${l.toLowerCase()} de ${f.screen}"><img src="${IMG[f.pg][t]}" alt="${l} · ${f.screen}" loading="lazy"></button></figure>`).join('')}</div>
+</article>`).join('');
+const lb=document.getElementById('uLb'), lbImg=document.getElementById('uLbImg'), lbCap=document.getElementById('uLbCap');
+function openLb(img){lbImg.src=img.src;lbCap.textContent=img.alt;lb.hidden=false;document.getElementById('uLbClose').focus();}
+function closeLb(){lb.hidden=true;lbImg.removeAttribute('src');}
+fixEl.querySelectorAll('.zoom').forEach(b=>b.onclick=()=>openLb(b.querySelector('img')));
+document.getElementById('uLbClose').onclick=closeLb;
+lb.addEventListener('click',e=>{if(e.target===lb)closeLb()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden)closeLb()});
+
+
+/* ---------- user flow de Cobre: pantallas del después, en el orden de la presentación ---------- */
+const SC={"6": "/casos/ns-agro/usuarios/despues-06.webp", "7": "/casos/ns-agro/usuarios/despues-07.webp", "9": "/casos/ns-agro/usuarios/flujo-09.webp", "10": "/casos/ns-agro/usuarios/flujo-10.webp", "11": "/casos/ns-agro/usuarios/flujo-11.webp", "12": "/casos/ns-agro/usuarios/flujo-12.webp", "13": "/casos/ns-agro/usuarios/flujo-13.webp", "14": "/casos/ns-agro/usuarios/flujo-14.webp", "15": "/casos/ns-agro/usuarios/flujo-15.webp", "17": "/casos/ns-agro/usuarios/flujo-17.webp", "18": "/casos/ns-agro/usuarios/flujo-18.webp", "19": "/casos/ns-agro/usuarios/flujo-19.webp"};
+const UF=[
+ {n:'Catálogo',d:'Elige el producto en Fitosanitarios.',img:6},
+ {n:'Ficha del producto',d:'Revisa precio, envase y ficha técnica.',img:7},
+ {n:'Agregar al carrito',d:'Confirma que el producto quedó en el carrito.',img:9},
+ {n:'Mi carrito',d:'Elige el tipo de entrega y la fecha.',img:10},
+ {n:'¿Retiro o envío?',dec:true,mini:[['RETIRO EN TIENDA',11],['ENVÍO A DOMICILIO',12]]},
+ {n:'Ingresar como invitado',d:'Compra sin crear cuenta.',img:13},
+ {n:'Pago en 4 pasos',mini:[['1 · DATOS',14],['2 · ENTREGA',15],['3 · PAGO',17],['4 · CONFIRMACIÓN',18]]},
+ {n:'Compra confirmada',d:'Resumen del pedido.',img:19},
+];
+const shot=(n,alt)=>`<button type="button" class="shot"><img src="${SC[n]}" alt="${alt}" loading="lazy"></button>`;
+const tr=document.getElementById('ufTrack');
+tr.innerHTML=UF.map((u,i)=>`<li class="uf-step"><div class="uf-card"><small>PASO ${String(i+1).padStart(2,'0')}</small>
+  ${u.dec?`<h4 class="dec"><i aria-hidden="true"></i>${u.n}</h4>`:`<h4>${u.n}</h4>`}
+  ${u.mini?`<div class="mini">${u.mini.map(m=>`<div><span>${m[0]}</span>${shot(m[1],u.n+' · '+m[0].toLowerCase())}</div>`).join('')}</div>`:shot(u.img,u.n)}
+  ${u.d?`<p>${u.d}</p>`:''}</div>${i<UF.length-1?'<span class="uf-arr" aria-hidden="true">→</span>':''}</li>`).join('');
+tr.querySelectorAll('.shot').forEach(b=>b.onclick=()=>openLb(b.querySelector('img')));
+const dots=document.getElementById('ufDots'); dots.innerHTML=UF.map(()=>'<b></b>').join('');
+const fill=document.getElementById('ufFill'), prev=document.getElementById('ufPrev'), next=document.getElementById('ufNext');
+const steps=[...tr.children];
+function ufSync(){
+  const max=tr.scrollWidth-tr.clientWidth, r=max>0?tr.scrollLeft/max:1;
+  const atEnd=tr.scrollLeft>max-4;
+  const cur=atEnd?steps.length-1:Math.round(tr.scrollLeft/stepW());
+  fill.style.width=(cur/(steps.length-1)*100)+'%';
+  steps.forEach((st,i)=>{const on=i<=cur; st.classList.toggle('seen',on); st.classList.toggle('now',i===cur); dots.children[i].classList.toggle('on',on);});
+  prev.disabled=tr.scrollLeft<4; next.disabled=tr.scrollLeft>max-4;
+}
+const stepW=()=>steps[0].getBoundingClientRect().width;
+prev.onclick=()=>tr.scrollBy({left:-stepW(),behavior:RM?'auto':'smooth'});
+next.onclick=()=>tr.scrollBy({left:stepW(),behavior:RM?'auto':'smooth'});
+tr.addEventListener('scroll',ufSync,{passive:true}); addEventListener('resize',ufSync); ufSync();
+document.getElementById('ufOthers').innerHTML=[
+ ['pl','Crear su usuario y comprar','Creación de usuario (natural o jurídico) → Pantalla de éxito → Ficha del producto → Pago, paso 3 (línea de crédito)'],
+ ['or','Gestionar su cuenta','Mi cuenta (inicio, vendedores, histórico de pedidos, cotizaciones, cuenta corriente, pago de facturas, programas y seguimiento) · Soporte: usuario B2B · Ficha del producto · Mi carrito'],
+ ['di','Comprar negociando el precio','Ficha del producto con opción de negociar → Pago, paso 3 → Código de verificación'],
+].map(([k,t,d])=>`<li><span class="u-tag k-${k}">${P[k]}</span><p><b>${t}.</b> ${d}</p></li>`).join('');
+
+/* ---------- tabs sincronizados ---------- */
+let cur='co';
+document.querySelectorAll('[data-tabs]').forEach(g=>{
+  g.innerHTML='<span class="lab">PERFIL</span>'+Object.keys(P).map(k=>`<button class="u-chip" type="button" data-k="${k}" style="--c:${COL[k]}" aria-pressed="${k===cur}">${P[k]}</button>`).join('');
+  g.addEventListener('click',e=>{const b=e.target.closest('[data-k]'); if(b) setTab(b.dataset.k)});
+});
+function setTab(k){
+  if(k===cur) return; cur=k;
+  document.querySelectorAll('[data-tabs] [data-k]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+  renderTable(k,true); renderPersona(k,true);
+}
+renderTable(cur,false); renderPersona(cur,false);
+
+/* entrada al hacer scroll: suma .in una vez; con movimiento reducido no anima */
+if(!RM){
+  /* como el resto del portfolio (lib/replay.ts): anima al aparecer y se repite cada vez que volvés a verlo */
+  const rv=[...document.querySelectorAll('#usuarios [data-rv]')];
+  const play=el=>{ el.classList.remove('in'); void el.offsetWidth; el.classList.add('in'); };
+  const first=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ first.unobserve(e.target); play(e.target); } }),{threshold:.18,rootMargin:'0px 0px -6% 0px'});
+  rv.forEach(el=>first.observe(el));
+  onReenter(rv, el=>el.classList.remove('in'), play);
+}
+})();
+
 }
