@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { onReenter } from "@/lib/replay";
 /* Animaciones e interacciones del caso, tal cual el HTML aprobado. */
 export default function run() {
 (() => {
@@ -108,13 +109,14 @@ export default function run() {
     ['MAILS', 4, ['RE: textos home', 'FW: fotos planta', 'RE: RE: orden del menú', 'Fwd: logos filiales', '¿Esta sección va?', 'RE: cambios v2', 'FW: fotos nuevas']]
   ];
   const NEW = [
-    ['UTILIDADES', 'util', ['Centros de valorización', 'Noticias', 'Contacto', 'Trabaja con nosotros', 'Intranet', 'EN | ES']],
-    ['Quiénes somos', 'cat', ['Propósito y valores', 'Historia e hitos', 'Estructura y directorio', 'Estrategia', 'En cifras']],
-    ['Líneas de negocio', 'cat', ['Waste to energy', 'Tratamiento de aguas industriales', 'Gestión de residuos y economía circular']],
-    ['Industrias', 'cat', ['Minería', 'Oil & Gas', 'Agrofood', 'Forestal y celulosa', 'Salmonera']],
-    ['Sostenibilidad', 'cat', ['Sostenibilidad', 'Ética y cumplimiento', 'Canal de denuncias']]
+    ['BARRA SUPERIOR', 'util', ['Quiénes somos', 'Sostenibilidad', 'Noticias', 'Trabaja con nosotros', 'Contacto']],
+    ['Gestión y valorización de residuos', 'cat', ['Minería', 'Oil & Gas', 'Alimentos & Bebidas', 'Forestal & Celulosa', 'Salmonera']],
+    ['Tratamiento de aguas industriales', 'cat', ['Minería', 'Oil & Gas', 'Alimentos & Bebidas', 'Salmonera']],
+    ['Waste to energy', 'cat', ['Minería']],
+    ['Tipos de residuos', 'cat', ['Metales', 'No metales']],
+    ['Centros de valorización', 'cat', ['Eccofeed', 'Calagro', 'Verdecorp', 'Greenspot', 'Afrecor', 'Geofuturo', 'Natpro', 'Bioheating', 'Degraf']]
   ];
-  const ORIGIN = { 'Oil & Gas': 'Petrolera', 'Minería': 'Minería', 'Forestal y celulosa': 'Forestal y celulosa', 'Salmonera': 'Salmonera', 'Agrofood': 'Alimentaria', 'Ética y cumplimiento': 'Ética y cumplimiento', 'Noticias': 'Noticias y Galería', 'Contacto': 'Contacto', 'Trabaja con nosotros': 'Trabaja en Resiter', 'Quiénes somos': 'Conozca Resiter', 'Industrias': 'Industrias', 'Centros de valorización': 'Filiales', 'Gestión de residuos y economía circular': 'Gestión integral de residuos', 'Tratamiento de aguas industriales': 'Recursos hídricos y RILes', 'Sostenibilidad': 'Economía circular' };
+  const ORIGIN = { 'Quiénes somos': 'Conozca Resiter', 'Noticias': 'Noticias y Galería', 'Trabaja con nosotros': 'Trabaja en Resiter', 'Contacto': 'Contacto', 'Sostenibilidad': 'Economía circular', 'Gestión y valorización de residuos': 'Gestión integral de residuos', 'Tratamiento de aguas industriales': 'Recursos hídricos y RILes', 'Centros de valorización': 'Filiales', 'Minería': 'Minería', 'Oil & Gas': 'Petrolera', 'Alimentos & Bebidas': 'Alimentaria', 'Forestal & Celulosa': 'Forestal y celulosa', 'Salmonera': 'Salmonera' };
 
   const mk = (txt, cls) => { const d = document.createElement('div'); d.className = 'n ' + cls; const s = document.createElement('span'); s.textContent = txt; d.appendChild(s); stage.appendChild(d); return d; };
   const oldN = [], oldH = [], newN = [], newH = [];
@@ -128,7 +130,7 @@ export default function run() {
     });
   });
   NEW.forEach(([h, kind, items], gi) => {
-    if (kind === 'util') newH.push({ el: mk('HEADER · UTILIDADES', 'hd nw'), g: gi });
+    if (kind === 'util') newH.push({ el: mk('BARRA SUPERIOR · INSTITUCIONAL', 'hd nw'), g: gi });
     else newN.push({ el: mk(h, 'new cat'), g: gi, t: h, head: true });
     items.forEach(t => newN.push({ el: mk(t, 'new' + (kind === 'util' ? ' util' : '')), g: gi, t }));
   });
@@ -168,7 +170,7 @@ export default function run() {
       if (ux + w > W) { ux = 0; uy += uh + 8; uh = 0; }
       L4.set(n.el, { x: ux, y: uy, w, o: 1 }); ux += w + 8; uh = Math.max(uh, h);
     });
-    const cats = [1, 2, 3, 4].map(gi => { const ns = newN.filter(n => n.g === gi); return { head: ns[0].el, items: ns.slice(1).map(n => n.el) }; });
+    const cats = NEW.map((_, gi) => gi).filter(gi => gi > 0).map(gi => { const ns = newN.filter(n => n.g === gi); return { head: ns[0].el, items: ns.slice(1).map(n => n.el) }; });
     const C4 = columns(cats, W, cols, uy + uh + 30, 14, 7);
     C4.out.forEach((v, k) => L4.set(k, v));
     const H = Math.max(L2.h, C4.h, 380) + pad * 2 + 10;
@@ -224,7 +226,7 @@ export default function run() {
     ['CAOS', 'Así llegaba todo: secciones del sitio viejo, servicios, industrias repetidas y mails con textos y fotos sueltos, sin un orden común.', [['var(--muted)', 'Ítems del sitio anterior'], ['var(--pink-l)', 'Mails con contenido']]],
     ['MAPEO', 'Ordené todo en FigJam con la estructura real del sitio. Ahí apareció lo que no funcionaba: industrias repetidas en varios lugares, secciones duplicadas en inglés e información de 2020/21.', [['var(--pink)', 'Se repite'], ['var(--violet-l)', 'Se juntan o está desactualizado'], ['var(--muted)', 'Estructura actual']]],
     ['PACTO', 'Con el mapa como documento de consenso, pactamos con el cliente qué secciones quedan en el header, qué va en cada desplegable y qué información se queda, se agrega o se va.', [['var(--lime-d)', 'Se queda'], ['var(--muted)', 'Sale o se fusiona']]],
-    ['ARQUITECTURA', 'El resultado: cuatro categorías claras en el menú principal y una barra de utilidades. Industrias y Líneas de negocio dejan de mezclarse y cada contenido tiene un solo lugar.', [['var(--lime)', 'Categoría principal'], ['var(--lime-l)', 'Subsección'], ['var(--cyan-l)', 'Utilidades']]]
+    ['ARQUITECTURA', 'Lo que quedó en el diseño final: arriba lo institucional y en el menú principal las líneas de negocio, cada una abierta por industria. Industrias y servicios dejan de mezclarse y cada contenido tiene un solo lugar.', [['var(--lime)', 'Línea de negocio'], ['var(--lime-l)', 'Industria o subsección'], ['var(--cyan-l)', 'Barra superior']]]
   ];
 
   let timer = null, auto = false;
@@ -340,11 +342,11 @@ export default function run() {
     portada: ['PORTADA', 'El título hace glitch y el subtítulo se escribe tipo terminal. El fondo es un lienzo punteado como el de FigJam y los contadores suben desde 0.'],
     intro: ['INTRODUCCIÓN', 'Las cards entran en cascada. Al pasar el mouse, las esquinas de visor recorren todo el borde.'],
     estrategia: ['ESTRATEGIA VISUAL', 'Un barrido escanea el sitio viejo y aparecen los puntos del diagnóstico: tocalos para ver cada problema. Más abajo, probá los efectos AOS en vivo.'],
-    arquitectura: ['GESTIÓN & ARQUITECTURA', 'La animación protagonista: los ítems pasan de caos a mapeo, pacto y arquitectura final. Usá las fases o REPRODUCIR. El log se escribe solo y la versión sube con cada vuelta.'],
+    arquitectura: ['ARQUITECTURA', 'La animación protagonista: los ítems pasan de caos a mapeo, pacto y arquitectura final. Usá las fases o REPRODUCIR. El log se escribe solo y la versión sube con cada vuelta.'],
     solucion: ['SOLUCIÓN', 'Las homes desktop y mobile se scrollean solas (el mouse las pausa). Arrastrá el divisor del antes/después y cambiá de sección con los chips. Al scrollear, el archivo final se aleja hasta verse completo, con sus 288 pantallas.'],
     cierre: ['CIERRE', 'Las cards entran en cascada. Bajo cada aprendizaje se dibuja una línea neón de fucsia a celeste, una después de otra. El botón del siguiente caso se desplaza al pasar el mouse.']
   };
-  const SECS = ['portada', 'intro', 'estrategia', 'arquitectura', 'solucion', 'cierre'].map(id => $('#' + id));
+  const SECS = ['portada', 'intro', 'arquitectura', 'estrategia', 'solucion', 'cierre'].map(id => $('#' + id));
   const nav = $('#nav'), prog = $('#progress'), dots = $('#dotsBg'), navCur = $('#navCur');
   const links = $$('.nav li a');
   let cur = '', ticking = false;
@@ -371,4 +373,107 @@ export default function run() {
   onScroll();
 
   })();
+
+  /* ================= arquitectura: mapa del sitio y matriz línea × industria ================= */
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  // primera vez al aparecer; después se repite cada vez que el bloque vuelve a la pantalla (lib/replay.ts)
+  const replay = (el, fn, th = .3) => {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.disconnect(); fn(); } }), { threshold: th });
+    io.observe(el);
+    onReenter([el], () => {}, () => fn());
+  };
+  // vuelve a correr una animación CSS desde cero sin dejar el contenido oculto en reposo
+  const rerun = el => { el.classList.add('ia-reset', 'pre'); void el.offsetWidth; el.classList.remove('ia-reset'); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('pre'))); };
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+  /* ============ mapa del sitio ============ */
+  const P = 'pend', C = 'case';
+  const IND5 = ['Minería', 'Oil & Gas', 'Alimentos & Bebidas', 'Forestal & Celulosa', 'Salmonera'];
+  const caseNode = items => ({ t: 'Casos de éxito', k: C, c: items.map(t => ({ t })) });
+  const TREE = [
+    { t: 'Barra superior', l1: 1, c: [
+      { t: 'Quiénes somos', c: [{ t: 'Propósito y valores' }, { t: 'Historia e hitos' }, { t: 'Estructura y directorio' }] },
+      { t: 'Sostenibilidad' }, { t: 'Noticias' }, { t: 'Trabaja con nosotros' }, { t: 'Contacto' }] },
+    { t: 'Menú principal · líneas de negocio', l1: 1, open: 1, c: [
+      { t: 'Gestión y valorización de residuos', c: [...IND5.map(t => ({ t })), { t: 'Agroindustria', k: P }, { t: 'Otras industrias', k: P }] },
+      { t: 'Tratamiento de aguas industriales', c: ['Minería', 'Oil & Gas', 'Alimentos & Bebidas', 'Salmonera'].map(t => ({ t })) },
+      { t: 'Waste to energy', c: [{ t: 'Minería' }, { t: 'Agroindustria', k: P }, { t: 'Otras industrias', k: P }] },
+      { t: 'Tipos de residuos', c: [
+        { t: 'Metales', c: [{ t: 'Acero, aluminio y cobre' }] },
+        { t: 'No metales', c: ['Plástico', 'Vidrio', 'Papel y cartón', 'Madera', 'Neumáticos', 'Escombros', 'Eléctricos y electrónicos', 'Hidrocarburos', 'Aguas contaminadas', 'Residuos sólidos', 'Residuos inorgánicos', 'Residuos orgánicos'].map(t => ({ t })) }] },
+      { t: 'Centros de valorización', c: ['Eccofeed', 'Calagro', 'Verdecorp', 'Greenspot', 'Afrecor', 'Geofuturo', 'Natpro', 'Bioheating', 'Degraf'].map(t => ({ t })) }] },
+    { t: 'Industrias · desde la home', l1: 1, c: [
+      { t: 'Minería', c: [caseNode(['Gestión y valorización de residuos', 'Servicios industriales', 'Servicios sanitarios', 'Recursos hídricos'])] },
+      { t: 'Oil & Gas', c: [caseNode(['Limpieza robotizada de tanques', 'Dragado de piscinas y lagunas', 'Tratamiento de aguas de sentina'])] },
+      { t: 'Alimentos & Bebidas', c: [caseNode(['Eccofeed', 'Calagro', 'Levadura de cerveza', 'Cero residuo a relleno sanitario'])] },
+      { t: 'Forestal & Celulosa', c: [caseNode(['Valorización de residuos', 'Internacionalización'])] },
+      { t: 'Salmonera', c: [caseNode(['Zero waste to landfill', 'Valorización de plásticos'])] },
+      { t: 'Agroindustria', k: P }, { t: 'Otras industrias', k: P }] },
+    { t: 'Dónde operamos · mapa de la home', l1: 1, c: ['Chile', 'Colombia', 'España', 'México', 'Perú', 'Uruguay'].map(t => ({ t, k: P })) }
+  ];
+  function node(n, depth) {
+    const cls = 'ia-node' + (n.l1 ? ' l1' : '') + (n.k === P ? ' pend' : '') + (n.k === C ? ' case' : '') + (!n.c && !n.k && depth > 1 ? ' leaf' : '');
+    const ct = n.c ? '<span class="ct">' + n.c.length + '</span>' : '';
+    const lab = '<span class="' + cls + '">' + esc(n.t) + ct + '</span>';
+    if (!n.c) return '<li>' + lab + '</li>';
+    return '<li><details' + (n.open ? ' open' : '') + '><summary>' + lab + '</summary><ul>' + n.c.map(x => node(x, depth + 1)).join('') + '</ul></details></li>';
+  }
+  const tree = $('#iaTree');
+  tree.innerHTML = '<span class="ia-root">HOME</span><ul><li><ul>' + TREE.map(n => node(n, 1)).join('') + '</ul></li></ul>';
+  // la raíz no lleva rama propia: sólo el primer nivel cuelga de HOME
+  const rootUl = tree.querySelector(':scope > ul'); rootUl.style.marginLeft = '0';
+  $$('ul ul > li', tree).forEach((u, i) => u.style.setProperty('--td', Math.min(i, 14) * 40 + 'ms'));
+  $('#iaOpen').addEventListener('click', () => $$('details', tree).forEach(d => d.open = true));
+  $('#iaClose').addEventListener('click', () => $$('details', tree).forEach(d => d.open = false));
+  if (!RM) replay(tree, () => rerun(tree), .2);
+
+  /* ============ matriz línea × industria ============ */
+  const COLS = [['GESTIÓN Y VALORIZACIÓN', 'Gestión y valorización de residuos', 'GESTIÓN'], ['TRATAMIENTO DE AGUAS', 'Tratamiento de aguas industriales', 'AGUAS'], ['WASTE TO ENERGY', 'Waste to energy', 'WASTE TO ENERGY']];
+  const ROWS = [
+    ['Minería', 'ok', 'ok', 'ok'],
+    ['Oil & Gas', 'ok', 'ok', 'na'],
+    ['Alimentos & Bebidas', 'ok', 'ok', 'na'],
+    ['Forestal & Celulosa', 'ok', 'na', 'na'],
+    ['Salmonera', 'ok', 'ok', 'na'],
+    ['Agroindustria', 'pd', 'na', 'pd'],
+    ['Otras industrias', 'pd', 'na', 'pd']
+  ];
+  const mx = $('#iaMx');
+  let html = '<div class="ia-mh" aria-hidden="true"></div>' + COLS.map((c, j) => '<div class="ia-mh" data-c="' + j + '"><span class="lg">' + c[0] + '</span><span class="sh">' + c[2] + '</span></div>').join('');
+  let n = 0;
+  ROWS.forEach((r, i) => {
+    const pend = r.slice(1).every(s => s !== 'ok');
+    html += '<div class="ia-mh rw' + (pend ? ' pd' : '') + '" data-r="' + i + '">' + esc(r[0]) + '</div>';
+    r.slice(1).forEach((s, j) => {
+      html += '<button type="button" class="ia-cell ' + s + '" data-r="' + i + '" data-c="' + j + '" aria-pressed="false" aria-label="' + esc(r[0]) + ' por ' + COLS[j][1] + '" style="--md:' + (n++ * 45) + 'ms"><i></i></button>';
+    });
+  });
+  mx.innerHTML = html;
+  const cells = $$('.ia-cell', mx);
+  function pickCell(i, j) {
+    cells.forEach(c => {
+      const on = +c.dataset.r === i && +c.dataset.c === j;
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      c.classList.toggle('cross', !on && (+c.dataset.r === i || +c.dataset.c === j));
+    });
+    $$('.ia-mh[data-c]', mx).forEach(h => h.classList.toggle('on', +h.dataset.c === j));
+    $$('.ia-mh[data-r]', mx).forEach(h => h.classList.toggle('on', +h.dataset.r === i));
+    const ind = ROWS[i][0], lin = COLS[j][1], s = ROWS[i][j + 1];
+    $('#iaMxT').textContent = ind.toUpperCase() + ' × ' + lin.toUpperCase();
+    const crumb = parts => parts.map(p => '<span>' + esc(p) + '</span>').join('<b>›</b>');
+    let out;
+    if (s === 'ok') out = '<div class="ia-path"><em>POR LA LÍNEA</em>' + crumb(['Menú principal', lin, ind]) + '</div><div class="ia-path"><em>POR LA INDUSTRIA</em>' + crumb(['Home', 'Industrias', ind, lin]) + '</div><p>Los dos caminos llegan a la misma página.</p>';
+    else if (s === 'pd') out = '<p>Quedó pendiente: estaba prevista, pero faltó el contenido del cliente para diseñarla.</p>';
+    else out = '<p>No hay página para esta combinación.</p>';
+    $('#iaMxP').innerHTML = out;
+  }
+  cells.forEach(c => c.addEventListener('click', () => pickCell(+c.dataset.r, +c.dataset.c)));
+  pickCell(0, 0);
+  if (!RM) replay(mx, () => rerun(mx), .3);
+})();
+
 }
