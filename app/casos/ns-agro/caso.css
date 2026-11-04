@@ -601,3 +601,8 @@ footer a{text-decoration:none}footer a:hover{color:var(--cyan)}
 .wf-box{width:100%;max-width:880px;margin-inline:auto;border:1px solid var(--line)}
 .wf-box .wfl{max-width:none;margin:0;padding:0;border:0}
 .wf-box .orig{max-width:none;border:0;border-top:1px solid var(--line)}
+
+/* visor: las dos capturas en cajas del mismo alto */
+.fv-imgs{align-items:end}
+.fv-f button{height:clamp(220px,24vw,330px);overflow:hidden}
+.fv-f img{height:100%;object-fit:contain;padding:12px;box-sizing:border-box}
