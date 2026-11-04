@@ -256,6 +256,19 @@ export default function run() {
   addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
 })();
 
+  /* ---- wireframes: el resto de los ajustes se abre debajo de los 3 primeros ---- */
+  (function () {
+    const btn = document.getElementById('wfBtn'), more = document.getElementById('wfMore');
+    if (!btn || !more) return;
+    btn.addEventListener('click', () => {
+      const open = more.hidden;
+      more.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? 'VER MENOS' : 'VER LOS OTROS 9 AJUSTES';
+      if (!open) btn.scrollIntoView({ block: 'nearest' });
+    });
+  })();
+
   /* ================= 05 · USUARIOS ================= */
 (()=>{
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
