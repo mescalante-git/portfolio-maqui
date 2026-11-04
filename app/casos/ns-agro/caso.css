@@ -596,3 +596,8 @@ footer a{text-decoration:none}footer a:hover{color:var(--cyan)}
 @media (max-width:700px){#usuarios .steps2,#usuarios .p-body{grid-template-columns:1fr}
 #usuarios .funnel4{grid-template-columns:1fr;justify-items:center}}
 @media (prefers-reduced-motion:reduce){#usuarios *,#usuarios *::before,#usuarios *::after{animation:none!important;transition:none!important}}
+
+/* wireframes: los 3 primeros ajustes a la vista y el resto desplegable */
+.wf-box{width:100%;max-width:880px;margin-inline:auto;border:1px solid var(--line)}
+.wf-box .wfl{max-width:none;margin:0;padding:0;border:0}
+.wf-box .orig{max-width:none;border:0;border-top:1px solid var(--line)}
