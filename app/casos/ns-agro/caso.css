@@ -255,7 +255,8 @@ footer a{text-decoration:none}footer a:hover{color:var(--cyan)}
 }
 /* volver al portfolio: solo a la izquierda; nombre del caso junto a las secciones, a la derecha */
 .nav .wrap>.logo{margin-left:auto}
-.nav ul{margin-left:92px}
+.nav ul{margin-left:clamp(12px,calc((min(100vw,1200px) - 1085px) * .38 - 24px),92px)}
+@media (max-width:1200px){.nav ul{display:none}.nav-cur{display:block}}
 .nav-cur{margin-left:-10px;padding-left:14px;border-left:1px solid var(--line)}
 .back{font:400 11px var(--mono);letter-spacing:.12em;color:#8a8a8a;text-decoration:none;white-space:nowrap;transition:color .25s}
 .back:hover,.back:focus-visible{color:var(--cyan-l)}
