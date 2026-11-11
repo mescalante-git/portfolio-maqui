@@ -91,39 +91,6 @@ const JOBS: Job[] = [
   },
 ];
 
-const REFS = [
-  {
-    tag: "DIRECCIÓN",
-    first: "Bernabé",
-    last: "Quesada Buschiazzo",
-    ini: "BQ",
-    role: "CEO · QR Solutions",
-    url: "https://www.linkedin.com/in/bernab%C3%A9-quesada-buschiazzo-estrategia-customerandsales-ux/",
-    k: "var(--blue)",
-    kl: "var(--blue-t)",
-  },
-  {
-    tag: "EQUIPO",
-    first: "Alejandra",
-    last: "Ferreyra",
-    ini: "AF",
-    role: "Recursos Humanos · QR Solutions",
-    url: "https://www.linkedin.com/in/alejandra-analia-ferreyra/",
-    k: "var(--violet)",
-    kl: "var(--violet-l)",
-  },
-  {
-    tag: "DESARROLLO",
-    first: "Rocío",
-    last: "Yanguas",
-    ini: "RY",
-    role: "Frontend Developer · QR Solutions",
-    url: "https://www.linkedin.com/in/rocio-y-887003155/",
-    k: "var(--cyan-d)",
-    kl: "var(--cyan-l)",
-  },
-];
-
 function JobItem({ x, i }: { x: Job; i: number }) {
   const [open, setOpen] = useState(false);
   const id = "xpm" + i;
@@ -221,50 +188,6 @@ export default function Experience() {
           {JOBS.map((x, i) => (
             <JobItem key={x.co} x={x} i={i} />
           ))}
-        </div>
-
-        <div className="rf" data-v="2">
-          <div className="rf-h" data-reveal="">
-            <small>
-              <i />
-              REFERENCIAS
-            </small>
-            <h3>Pueden contarte cómo trabajo</h3>
-            <p>Dirección, equipo y desarrollo de QR Solutions. Escribiles directo por LinkedIn.</p>
-          </div>
-          <div className="rf-g">
-            {REFS.map((r, i) => (
-              <article
-                key={r.ini}
-                className="rf-c"
-                data-reveal=""
-                style={{ "--k": r.k, "--kl": r.kl, "--d": `${i * 120}ms` } as CSSProperties}
-              >
-                <span className="rf-av" aria-hidden="true">
-                  <i>{r.ini}</i>
-                </span>
-                <span className="rf-tag">{r.tag}</span>
-                <div className="rf-t">
-                  <b>
-                    {r.first}
-                    <br />
-                    {r.last}
-                  </b>
-                  <span>{r.role}</span>
-                </div>
-                <span className="rf-bc" aria-hidden="true" />
-                <a
-                  className="rf-go"
-                  href={r.url}
-                  target="_blank"
-                  rel="noopener"
-                  aria-label={`Hablar con ${r.first} ${r.last} por LinkedIn`}
-                >
-                  HABLAR POR LINKEDIN ↗
-                </a>
-              </article>
-            ))}
-          </div>
         </div>
 
         <div className="cv" data-reveal="">
