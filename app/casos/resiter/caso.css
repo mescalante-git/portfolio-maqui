@@ -322,6 +322,19 @@ footer a{text-decoration:none}footer a:hover{color:var(--lime)}
   .log{font-size:12.5px}
   .n{font-size:11px;padding:5px 7px}
 }
+/* volver al portfolio: chico y apagado, se enciende con el color del caso */
+.nav-l{display:flex;align-items:center;gap:28px;min-width:0}
+.nav ul{margin-left:28px}
+.back{font:400 11px var(--mono);letter-spacing:.12em;color:#8a8a8a;text-decoration:none;white-space:nowrap;transition:color .25s}
+.back:hover,.back:focus-visible{color:var(--lime-l)}
+.back-top{position:absolute;z-index:2;top:28px;left:max(16px,calc((100% - 1200px) / 2 + 16px))}
+@media (max-width:560px){
+  .nav-l{gap:20px}
+  .logo{font-size:15px}
+  .nav-cur{font-size:0}
+  .nav-cur::after{content:attr(data-n);font-size:12px}
+  .back-top{top:22px}
+}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
