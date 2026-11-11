@@ -480,6 +480,7 @@ export default function run() {
       curSec = id;
       links.forEach(a => a.setAttribute('aria-current', a.dataset.sec === id ? 'true' : 'false'));
       const g = GUIDE[id]; navCur.textContent = g[0];
+      const n = SECS.findIndex(x => x.id === id); navCur.dataset.n = n > 0 ? String(n).padStart(2, '0') : '';
       lmsg.classList.add('swap');
       setTimeout(() => { ltxt.textContent = g[2]; lmsg.classList.remove('swap'); }, RM ? 0 : 250);
     }
